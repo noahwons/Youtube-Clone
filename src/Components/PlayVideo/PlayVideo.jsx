@@ -7,10 +7,13 @@ import share from '../../assets/share.png'
 import save from '../../assets/save.png'
 import jack from '../../assets/jack.png'
 import user_profile from '../../assets/user_profile.jpg'
-import { APIkey, value_converter } from '../../data'
+import { API_KEY, value_converter } from '../../data'
 import moment from 'moment'
+import { useParams } from 'react-router-dom'
 
-const PlayVideo = ({videoId}) => {
+const PlayVideo = () => {
+
+    const { videoId } = useParams()
 
     const [apiData, setApiData] = React.useState(null)
     const [channelData, setChannelData] = React.useState(null)
@@ -18,23 +21,23 @@ const PlayVideo = ({videoId}) => {
 
     const fetchVideoData = async () => {
         // Fetching video data from API
-        const videoDetails_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${APIkey}`
+        const videoDetails_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${API_KEY}`
         await fetch(videoDetails_url).then(response=>response.json()).then(data => setApiData(data.items[0]))
     }
 
     const fetchOtherData = async () => {
         // Fetching channel data from API
-        const channelData_url =  `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${apiData.snippet.channelId}&key=${APIkey}`
+        const channelData_url =  `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${apiData.snippet.channelId}&key=${API_KEY}`
         await fetch(channelData_url).then(response=>response.json()).then(data => setChannelData(data.items[0]))
         
         // Fetching comments data from API
-        const comment_url = `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&maxResults=50&videoId=${videoId}&key=${APIkey}`
+        const comment_url = `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&maxResults=50&videoId=${videoId}&key=${API_KEY}`
         await fetch(comment_url).then(response=>response.json()).then(data => setCommentData(data.items))
     }
 
     useEffect(()=>{
         fetchVideoData();
-    },[])
+    },[videoId])
 
     useEffect(()=>{
         fetchOtherData();   
